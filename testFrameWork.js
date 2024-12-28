@@ -7,8 +7,19 @@ const areEqual = (a, b) => {
   return a.every((value, index) => areEqual(value, b[index]));
 };
 
+const sortResultsByStatus = (results) => {
+  const sorted = [];
+  results.map((result) =>
+    isEqual(result.status, "passed")
+      ? sorted.push(result)
+      : sorted.unshift(result)
+  );
+
+  console.table(sorted);
+};
+
 export const testSuite = (Fn, ...testCases) => {
-  const result = testCases.map((testCase) => {
+  const results = testCases.map((testCase) => {
     const { description, params, expected } = { ...testCase };
     const actual = Fn(...params);
     const status = areEqual(actual, expected) ? "passed" : "failed";
@@ -16,5 +27,5 @@ export const testSuite = (Fn, ...testCases) => {
     return { status, description, params, expected, actual };
   });
 
-  console.table(result);
+  return sortResultsByStatus(results);
 };
